@@ -1,27 +1,29 @@
-var http = require('http')
-var server
+var express = require('express');
+var app = express();
+var http = require('http').Server(app);
 
-function onRequest(req, res) {
-    console.log('[' + this.name + ']', req.method, req.url)
-    res.writeHead(200, {'Content-Type': 'text/plain'})
-    res.end('Hello World \n'+req.connection.remoteAddress)
-}
+app.get('/config', function(req, res){
+  
+   var objectsend={};
+  objectsend.display_banner=1;
+  objectsend.display_fullscreen=1;
+  objectsend.port=2020;
+  objectsend.gameip="104.197.35.76";//ip server dat tai my
+ 
+  if (req.query.local !== 'undefined') {
+  		var timezone = Number(req.query.local);
+	  if (timezone >= (-2) && timezone <= 4) {
+	  	objectsend.gameip="104.155.45.73";//ip server dat tai EU:  104.155.45.73
+	  } else if (timezone > 4) {
+	  	objectsend.gameip="104.199.172.133";//ip server o chau A   : 104.199.172.133
+	  }			
+  }
+  console.log("req.connection.remoteAddress: %s",req.connection.remoteAddress);
+  objectsend.clientIP=req.connection.remoteAddress;
+  res.setHeader('Content-Type', 'application/json');
+  res.send(""+JSON.stringify(objectsend));  
+});
 
-function onListening() {
-    console.log('[' + this.name + '] Listening at http://' + this.address().address + ':' + this.address().port + '/')
-}
-
-ipv4server = http.createServer()
-ipv6server = http.createServer()
-
-ipv4server.name = 'ipv4server'
-ipv6server.name = 'ipv6server'
-
-ipv4server.on('request', onRequest)
-ipv6server.on('request', onRequest)
-
-ipv4server.on('listening', onListening)
-ipv6server.on('listening', onListening)
-
-ipv4server.listen(2020, '127.0.0.1')
-ipv6server.listen(2020, '::1')
+http.listen(2020, function(){
+	console.log('listening on : 2020');
+});

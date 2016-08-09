@@ -53,6 +53,7 @@
                 cc.view.enableRetina(true);
             }
             //cc.view.setDesignResolutionSize(settings.designWidth, settings.designHeight, cc.ResolutionPolicy.SHOW_ALL);
+            cc.view.enableAutoFullScreen(cc.sys.isMobile && cc.sys.browserType !== cc.sys.BROWSER_TYPE_BAIDU);
         
             if (cc.sys.isBrowser) {
                 setLoadingDisplay();
@@ -107,6 +108,12 @@
         else {
             jsList = [bundledScript];
         }
+
+        // anysdk scripts
+        if (cc.sys.isNative && cc.sys.isMobile) {
+            jsList = jsList.concat(['jsb_anysdk.js', 'jsb_anysdk_constants.js']);
+        }
+
         jsList = jsList.map(function (x) { return 'src/' + x; });
 
         var option = {
